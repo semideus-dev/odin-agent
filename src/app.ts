@@ -1,14 +1,47 @@
 import { timingSafeEqual } from 'node:crypto'
 import { Hono } from 'hono'
 import { generateText } from 'ai'
+import { tasks } from '@trigger.dev/sdk'
 import { geminiModel } from './ai/model.js'
 import { env } from './env.js'
 import { sendMessage, type TelegramMessage, type TelegramUpdate } from './telegram.js'
+import type { aiTestTask } from './trigger/ai-test.js'
 
 const app = new Hono()
 
 app.get('/', (c) => {
   return c.text('Telegram AI bot is running')
+})
+
+/**
+ * Temporary public AI smoke test.
+ *
+ * Remove this route once the deployed AI integration has been verified.
+ */
+app.get('/test/ai', async (c) => {
+  const prompt = c.req.query('prompt')?.trim() || 'Say hello in one short sentence.'
+
+  if (prompt.length > 1000) {
+    return c.json({ error: 'prompt must be 1000 characters or fewer' }, 400)
+  }
+
+  try {
+    const run = await tasks.trigger<typeof aiTestTask>('ai-test-generation', {
+      prompt,
+    })
+
+    return c.json(
+      {
+        taskId: 'ai-test-generation',
+        runId: run.id,
+        status: 'queued',
+      },
+      202,
+    )
+  } catch (error) {
+    console.error('Failed to queue AI test task', error)
+    return c.json({ error: 'Failed to queue AI generation' }, 502)
+  }
 })
 
 export const WEBHOOK_PATH = '/webhook/telegram'

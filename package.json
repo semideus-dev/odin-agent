@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "webhook:set": "tsx src/scripts/set-webhook.ts",
     "webhook:delete": "tsx src/scripts/set-webhook.ts --delete",
     "webhook:info": "tsx src/scripts/set-webhook.ts --info"
@@ -15,12 +15,14 @@
     "@hono/node-server": "^2.1.3",
     "@neon/config": "^1.14.5",
     "@neon/env": "^2.1.8",
+    "@trigger.dev/sdk": "4.8.8",
     "ai": "^7.0.177",
     "hono": "^4.13.16",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@hono/cli": "^0.1.11",
+    "@trigger.dev/build": "4.8.8",
     "@types/node": "^26.1.1",
     "tsx": "^4.23.0",
     "typescript": "^7.0.2"

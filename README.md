@@ -44,6 +44,7 @@ bun run webhook:delete
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/` | Health check |
+| `GET` | `/test/ai?prompt=...` | Temporary public AI generation smoke test |
 | `POST` | `/webhook/telegram` | Telegram update receiver (AI answers text) |
 
 Requests without a matching `X-Telegram-Bot-Api-Secret-Token` header get `401`.
