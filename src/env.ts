@@ -34,4 +34,7 @@ export const env = {
   get apiBaseUrl(): string {
     return process.env.TELEGRAM_API_BASE_URL ?? 'https://api.telegram.org'
   },
+  get googleGenerativeAiApiKey(): string {
+    return required('GOOGLE_GENERATIVE_AI_API_KEY')
+  },
 }

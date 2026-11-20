@@ -1,7 +1,7 @@
 # odin-agent
 
-A tiny Telegram echo bot built with [Hono](https://hono.dev). Every text message
-the bot receives is sent straight back to the same chat.
+A tiny Telegram AI bot built with [Hono](https://hono.dev) and the Vercel AI SDK.
+It uses a low-cost Gemini model to answer text messages.
 
 ## Setup
 
@@ -44,7 +44,7 @@ bun run webhook:delete
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/` | Health check |
-| `POST` | `/webhook/telegram` | Telegram update receiver (echoes text) |
+| `POST` | `/webhook/telegram` | Telegram update receiver (AI answers text) |
 
 Requests without a matching `X-Telegram-Bot-Api-Secret-Token` header get `401`.
 Non-text messages (photos, stickers, ...) are answered with a short notice.

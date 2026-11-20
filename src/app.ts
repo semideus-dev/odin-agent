@@ -1,12 +1,14 @@
 import { timingSafeEqual } from 'node:crypto'
 import { Hono } from 'hono'
+import { generateText } from 'ai'
+import { geminiModel } from './ai/model.js'
 import { env } from './env.js'
 import { sendMessage, type TelegramMessage, type TelegramUpdate } from './telegram.js'
 
 const app = new Hono()
 
 app.get('/', (c) => {
-  return c.text('Telegram echo bot is running')
+  return c.text('Telegram AI bot is running')
 })
 
 export const WEBHOOK_PATH = '/webhook/telegram'
@@ -24,17 +26,28 @@ function hasValidSecret(received: string | undefined): boolean {
   return expected.length === actual.length && timingSafeEqual(expected, actual)
 }
 
-async function echo(message: TelegramMessage): Promise<void> {
+async function answerMessage(message: TelegramMessage): Promise<void> {
   const text = message.text ?? message.caption
 
   if (!text) {
-    await sendMessage(message.chat.id, 'I can only echo text messages for now.', {
+    await sendMessage(message.chat.id, 'I can only answer text messages for now.', {
       replyToMessageId: message.message_id,
     })
     return
   }
 
-  await sendMessage(message.chat.id, text, { replyToMessageId: message.message_id })
+  const result = await generateText({
+    model: geminiModel,
+    instructions:
+      'You are a helpful Telegram assistant. Answer clearly and concisely. ' +
+      'Keep responses under 3500 characters and use plain text without Markdown formatting.',
+    prompt: text,
+    maxOutputTokens: 512,
+  })
+
+  await sendMessage(message.chat.id, result.text, {
+    replyToMessageId: message.message_id,
+  })
 }
 
 app.post(WEBHOOK_PATH, async (c) => {
@@ -52,7 +65,7 @@ app.post(WEBHOOK_PATH, async (c) => {
   // Only handle new messages: echoing edits would double-reply in a chat.
   if (update.message) {
     try {
-      await echo(update.message)
+      await answerMessage(update.message)
     } catch (error) {
       // Log and still return 200, otherwise Telegram keeps retrying the update.
       console.error('Failed to handle update', update.update_id, error)
