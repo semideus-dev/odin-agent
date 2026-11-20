@@ -4,7 +4,10 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "webhook:set": "tsx src/scripts/set-webhook.ts",
+    "webhook:delete": "tsx src/scripts/set-webhook.ts --delete",
+    "webhook:info": "tsx src/scripts/set-webhook.ts --info"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.3",
