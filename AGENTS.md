@@ -2,6 +2,10 @@
 
 Run `bunx hono --help` first, and use the CLI instead of a dev server.
 
+## Railway variables
+
+When syncing variables with Railway, never overwrite `TRIGGER_SECRET_KEY`. The development and production environments use different values, so preserve the existing environment-specific value in each environment.
+
 <!-- TRIGGER.DEV SKILLS START -->
 ## Trigger.dev agent skills
 
